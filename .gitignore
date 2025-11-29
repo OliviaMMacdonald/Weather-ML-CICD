@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# OS files
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Model artifacts (optional)
+model/*.pkl
+
+# Pytest cache
+.pytest_cache/

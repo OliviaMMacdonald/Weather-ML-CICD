@@ -22,10 +22,11 @@ def load_model(model_path='model/model.pkl'):
 def classify_weather(features):
     model = load_model()
     start = time.time()
+    
     prediction_index = model.predict(features)[0]
     latency = round((time.time() - start) * 1000, 2)
     
-    # Use the model’s predicted index to look up the label
+    # Use the predicted index to look up the weather class
     prediction = weather_classes[int(prediction_index)]
     
     return prediction, latency
@@ -35,42 +36,43 @@ def classify_weather(features):
 def home():
     if request.method == 'POST':
         try:
-            # --- Read and convert form inputs to floats ---
-            temperature = float(request.form['temperature'])
-            pressure = float(request.form['pressure'])
-            humidity = float(request.form['humidity'])
-            wind_speed = float(request.form['wind_speed'])
-            wind_deg = float(request.form['wind_deg'])
+            # Convert all inputs to floats so sklearn gets numeric data
+            temperature = float(request.form.get('temperature'))
+            pressure    = float(request.form.get('pressure'))
+            humidity    = float(request.form.get('humidity'))
+            wind_speed  = float(request.form.get('wind_speed'))
+            wind_deg    = float(request.form.get('wind_deg'))
 
-            # Optional fields: default to 0 if missing/blank
+            # Optional fields – treat empty as 0
             rain_1h = float(request.form.get('rain_1h', 0) or 0)
             rain_3h = float(request.form.get('rain_3h', 0) or 0)
-            snow = float(request.form.get('snow', 0) or 0)
-            clouds = float(request.form.get('clouds', 0) or 0)
+            snow    = float(request.form.get('snow', 0) or 0)
+            clouds  = float(request.form.get('clouds', 0) or 0)
 
-            # --- Build numeric feature array for the model ---
+            # Build numeric feature array for the model
             features = np.array([
                 temperature, pressure, humidity,
                 wind_speed, wind_deg, rain_1h,
                 rain_3h, snow, clouds
             ], dtype=float).reshape(1, -1)
 
-            # --- Classify and measure latency ---
             prediction, latency = classify_weather(features)
 
-            # Render result page
-            return render_template(
-                'result.html',
-                prediction=prediction,
-                latency=latency
-            )
+            return render_template('result.html',
+                                   prediction=prediction,
+                                   latency=latency)
 
-        except Exception as e:
-            error_msg = f"Error processing input: {e}"
-            # Re-render the form with an error message
+        except ValueError:
+            # User typed something non-numeric
+            error_msg = "Please make sure all inputs are numbers (e.g. 12.5, 0, 1013)."
             return render_template('form.html', error=error_msg)
 
-    # GET request – show the input form
+        except Exception as e:
+            # Any other unexpected error
+            error_msg = f"Error processing input: {e}"
+            return render_template('form.html', error=error_msg)
+
+    # GET: just show the form
     return render_template('form.html')
 
 
