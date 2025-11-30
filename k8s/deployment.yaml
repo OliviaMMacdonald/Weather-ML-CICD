@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-ml-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weather-ml-app
+  template:
+    metadata:
+      labels:
+        app: weather-ml-app
+    spec:
+      containers:
+        - name: weather-ml-container
+          image: weather-ml-app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5001

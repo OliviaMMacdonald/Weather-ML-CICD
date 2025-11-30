@@ -1,0 +1,35 @@
+---
+- name: Deploy Weather ML App using Docker
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Build the Docker image
+    # Build local Docker image from project root (one level up from ansible/)
+      community.docker.docker_image:
+        name: "{{ docker_image }}"
+        source: build
+        build:
+          path: ".."
+
+    - name: Stop any existing container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        state: absent
+
+    - name: Run the container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        image: "{{ docker_image }}"
+        state: started
+        restart_policy: unless-stopped
+        published_ports:
+          - "{{ app_port }}:5001"
+
+    - name: Show application URL
+      debug:
+        msg: "Weather ML app is running at http://localhost:{{ app_port }}"

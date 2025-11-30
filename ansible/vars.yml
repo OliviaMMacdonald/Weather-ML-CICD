@@ -1,0 +1,3 @@
+docker_image: "weather-ml-app"
+container_name: "weather-ml-container"
+app_port: 5001
