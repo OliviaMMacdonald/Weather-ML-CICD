@@ -1,0 +1,30 @@
+name: CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Activate Minikube Docker environment (if needed)
+        run: |
+          # This assumes Minikube is installed on the self-hosted runner
+          echo "Setting up Minikube Docker env..."
+          eval $(minikube docker-env)
+
+      - name: Apply Kubernetes manifests
+        run: |
+          echo "Deploying updated version of the app to Kubernetes..."
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+
+      - name: Show rollout status
+        run: |
+          kubectl rollout status deployment/weather-ml-deployment
+          kubectl get pods
+          kubectl get svcdo
