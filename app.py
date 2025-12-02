@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Order here must match the model's target encoding
 weather_classes = [
     'clear', 'cloudy', 'drizzly', 'foggy', 'hazey',
-    'misty', 'rain', 'smokey', 'thunderstorm'
+    'misty', 'rainy', 'smokey', 'thunderstorm'
 ]
 
 
