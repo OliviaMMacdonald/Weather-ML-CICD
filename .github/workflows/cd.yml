@@ -13,7 +13,7 @@ jobs:
 
       - name: Activate Minikube Docker environment (if needed)
         run: |
-          # This assumes Minikube is installed on the self-hosted runner
+          #This assumes Minikube is installed on the self-hosted runner
           echo "Setting up Minikube Docker env..."
           eval $(minikube docker-env)
 
