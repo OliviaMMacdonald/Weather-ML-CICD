@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: weather-ml-container
-          image: weather-ml-app:latest
+          image: weather-ml-app:v2
           imagePullPolicy: Never
           ports:
             - containerPort: 5001
